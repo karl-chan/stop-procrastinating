@@ -7,6 +7,7 @@
     StructuredListRow,
     Tile,
   } from "carbon-components-svelte";
+  import { DataCheck } from "carbon-icons-svelte";
   import CheckmarkFilled from "carbon-icons-svelte/lib/CheckmarkFilled.svelte";
   import Edit from "carbon-icons-svelte/lib/Edit.svelte";
   import { createEventDispatcher } from "svelte";
@@ -23,7 +24,6 @@
   const dispatch = createEventDispatcher();
 
   let showEditor = false;
-  let editor: ChecklistEditor;
 
   function dismiss(i: number) {
     const item = checklist[i];
@@ -34,6 +34,14 @@
 
     if (dismissed.every((isDismissed) => isDismissed)) {
       dispatch("dismissAll");
+    }
+  }
+
+  function dismissAll() {
+    for (let i = 0; i < checklist.length; i++) {
+      if (!dismissed[i]) {
+        dismiss(i);
+      }
     }
   }
 </script>
@@ -48,6 +56,13 @@
           iconDescription="Edit"
           icon={Edit}
           on:click={() => (showEditor = true)}
+        />
+      {/if}
+      {#if remainingCount > 0}
+        <Button
+          iconDescription="Open and dismiss all"
+          icon={DataCheck}
+          on:click={dismissAll}
         />
       {/if}
     </Flex>
