@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from "$app/paths";
   import {
     Content,
     Header,
@@ -19,15 +20,15 @@
   persistentHamburgerMenu={true}
 >
   <HeaderNav>
-    <HeaderNavItem href="/" text="Home" />
-    <HeaderNavItem href="/progress" text="Progress" />
+    <HeaderNavItem href="{base}/" text="Home" />
+    <HeaderNavItem href="{base}/progress" text="Progress" />
   </HeaderNav>
 </Header>
 
 <SideNav bind:isOpen={isSideNavOpen}>
   <SideNavItems>
-    <SideNavLink href="/" text="Home" />
-    <SideNavLink href="/progress" text="Progress" />
+    <SideNavLink href="{base}/" text="Home" />
+    <SideNavLink href="{base}/progress" text="Progress" />
   </SideNavItems>
 </SideNav>
 
