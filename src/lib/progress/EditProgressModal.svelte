@@ -1,25 +1,38 @@
 <script lang="ts">
-  import { Form, Modal, TextInput, Toggle } from "carbon-components-svelte";
+  import { Form, Modal, TextInput } from "carbon-components-svelte";
+  import type { TreeNodeId } from "carbon-components-svelte/types/TreeView/TreeView.svelte";
   import { createEventDispatcher } from "svelte";
-  import type { AddProgressArgs, ProgressTree } from "./progress";
+  import type { EditProgressArgs, ProgressTree } from "./progress";
 
   export let open: boolean;
-  export let parent: ProgressTree | undefined;
+  export let activeId: TreeNodeId;
+  export let progress: ProgressTree | undefined;
 
-  $: heading =
-    parent !== undefined
-      ? `Add ${isItemText} under ${parent.name}`
-      : `Add ${isItemText}`;
-
+  let isItem = false;
   let name: string = "";
   let description: string = "";
   let current: number = NaN;
   let total: number = NaN;
 
-  let isItem = false;
-  $: isItemText = isItem ? "item" : "category";
+  $: {
+    initialiseFields(progress);
+  }
 
-  const dispatch = createEventDispatcher<{ add: AddProgressArgs }>();
+  const dispatch = createEventDispatcher<{ edit: EditProgressArgs }>();
+
+  function initialiseFields(progress: ProgressTree | undefined) {
+    if (progress !== undefined) {
+      ({ name, description } = progress);
+
+      if (progress.leaf !== undefined) {
+        isItem = true;
+        ({ current, total } = progress.leaf);
+      } else {
+        isItem = false;
+        current = total = NaN;
+      }
+    }
+  }
 
   function validate(): boolean {
     if (isItem) {
@@ -35,29 +48,17 @@
     }
   }
 
-  function add() {
+  function edit() {
     if (!validate()) {
       return;
     }
 
-    const progress: ProgressTree = isItem
-      ? {
-          name,
-          description,
-          leaf: {
-            current,
-            total,
-          },
-        }
-      : {
-          name,
-          description,
-          children: [],
-        };
-
-    dispatch("add", {
-      progress,
-      parent,
+    dispatch("edit", {
+      id: activeId,
+      name,
+      description,
+      current,
+      total,
     });
     open = false;
   }
@@ -65,12 +66,12 @@
 
 <Modal
   bind:open
-  modalHeading={heading}
+  modalHeading="Edit item"
   primaryButtonText="Confirm"
   secondaryButtonText="Cancel"
   hasForm={true}
   on:click:button--secondary={() => (open = false)}
-  on:submit={add}
+  on:submit={edit}
 >
   <Form>
     <TextInput
@@ -84,12 +85,6 @@
       bind:value={description}
       labelText="Description"
       placeholder="My description (optional)"
-    />
-    <Toggle
-      labelText="Type"
-      bind:toggled={isItem}
-      labelA="Category"
-      labelB="Item"
     />
 
     {#if isItem}
