@@ -1,7 +1,15 @@
 <script lang="ts">
-  import { Button, ButtonSet } from "carbon-components-svelte";
+  import { Button } from "carbon-components-svelte";
   import type { TreeNodeId } from "carbon-components-svelte/types/TreeView/TreeView.svelte";
-  import { Add, Clean, Edit, TrashCan } from "carbon-icons-svelte";
+  import {
+    Add,
+    ArrowDown,
+    ArrowUp,
+    Clean,
+    Edit,
+    TrashCan,
+  } from "carbon-icons-svelte";
+  import Flex from "../flex/Flex.svelte";
   import AddProgressModal from "./AddProgressModal.svelte";
   import EditProgressModal from "./EditProgressModal.svelte";
   import ProgressTreeView from "./ProgressTreeView.svelte";
@@ -29,6 +37,12 @@
 
   $: addItemButtonMessage = renderAddItemButtomMessage(activeId);
   $: hasSelection = activeId !== undefined && activeId !== "";
+
+  interface SelectionInfo {
+    isFirstOfParent: boolean;
+    isLastOfParent: boolean;
+  }
+  $: selectionInfo = updateSelectionInfo(activeId);
 
   function handleAdd(event: CustomEvent<AddProgressArgs>) {
     const { progress: toAdd, parent } = event.detail;
@@ -116,6 +130,83 @@
       return "Add child item";
     }
   }
+
+  function updateSelectionInfo(
+    activeId: TreeNodeId | undefined
+  ): SelectionInfo {
+    if (!hasSelection) {
+      return {
+        isFirstOfParent: false,
+        isLastOfParent: false,
+      };
+    }
+    const selected = mapping.get(activeId!);
+    const parentId = parentMapping.get(activeId!);
+    if (parentId === undefined) {
+      return {
+        isFirstOfParent: progress[0] === selected,
+        isLastOfParent: progress[progress.length - 1] === selected,
+      };
+    } else {
+      const siblings = mapping.get(parentId)?.children!;
+      return {
+        isFirstOfParent: siblings[0] === selected,
+        isLastOfParent: siblings[siblings.length - 1] === selected,
+      };
+    }
+  }
+
+  function moveUp() {
+    move({ isUp: true });
+  }
+
+  function moveDown() {
+    move({ isDown: true });
+  }
+
+  function move(direction: { isUp?: boolean; isDown?: boolean }) {
+    const selected = mapping.get(activeId!)!;
+    const parentId = parentMapping.get(activeId!);
+    if (parentId === undefined) {
+      const index = progress.indexOf(selected);
+      if (direction.isUp) {
+        progress = [
+          ...progress.slice(0, index - 1),
+          selected,
+          progress[index - 1],
+          ...progress.slice(index + 1),
+        ];
+      } else if (direction.isDown) {
+        progress = [
+          ...progress.slice(0, index),
+          progress[index + 1],
+          selected,
+          ...progress.slice(index + 2),
+        ];
+      }
+    } else {
+      const parent = mapping.get(parentId)!;
+      const siblings = parent.children!;
+      const index = siblings.indexOf(selected);
+      if (direction.isUp) {
+        parent.children = [
+          ...siblings.slice(0, index - 1),
+          selected,
+          siblings[index - 1],
+          ...siblings.slice(index + 1),
+        ];
+      } else if (direction.isDown) {
+        parent.children = [
+          ...siblings.slice(0, index),
+          siblings[index + 1],
+          selected,
+          ...siblings.slice(index + 2),
+        ];
+      }
+      progress = progress;
+    }
+    activeId = undefined;
+  }
 </script>
 
 <ProgressTreeView
@@ -125,7 +216,7 @@
   on:mappingChange={handleMappingChange}
 />
 
-<ButtonSet>
+<Flex direction="row" justify="start">
   <Button icon={Add} kind="tertiary" on:click={() => (showAddModal = true)}
     >{addItemButtonMessage}</Button
   >
@@ -141,8 +232,22 @@
     <Button icon={Clean} kind="primary" on:click={() => (activeId = undefined)}
       >Deselect item
     </Button>
+    <Button
+      icon={ArrowUp}
+      iconDescription="Move up"
+      kind="secondary"
+      bind:disabled={selectionInfo.isFirstOfParent}
+      on:click={moveUp}
+    />
+    <Button
+      icon={ArrowDown}
+      iconDescription="Move down"
+      kind="secondary"
+      bind:disabled={selectionInfo.isLastOfParent}
+      on:click={moveDown}
+    />
   {/if}
-</ButtonSet>
+</Flex>
 
 {#if showAddModal}
   <AddProgressModal
