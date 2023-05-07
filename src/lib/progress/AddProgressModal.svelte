@@ -95,7 +95,7 @@
     {#if isItem}
       <TextInput
         bind:value={current}
-        invalid={Number.isInteger(current)}
+        invalid={!Number.isInteger(current) || current > total}
         labelText="Current value"
         type="number"
         required
@@ -103,7 +103,7 @@
       />
       <TextInput
         bind:value={total}
-        invalid={Number.isInteger(total)}
+        invalid={!Number.isInteger(total)}
         labelText="Total"
         type="number"
         required

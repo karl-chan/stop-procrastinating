@@ -30,3 +30,9 @@ export interface EditProgressArgs {
 export interface RemoveProgressArgs {
   progress: ProgressTree
 }
+
+export interface ProgressTreeMappingChangeArgs {
+  mapping: Map<TreeNodeId, ProgressTree>
+  parentMapping: Map<TreeNodeId, TreeNodeId> // Child id to parent id
+
+}
