@@ -35,8 +35,8 @@
   let mapping: Map<TreeNodeId, ProgressTree>;
   let parentMapping: Map<TreeNodeId, TreeNodeId>;
 
-  $: addItemButtonMessage = renderAddItemButtomMessage(activeId);
   $: hasSelection = activeId !== undefined && activeId !== "";
+  $: addItemButtonMessage = renderAddItemButtomMessage(activeId, hasSelection);
 
   interface SelectionInfo {
     isFirstOfParent: boolean;
@@ -118,7 +118,8 @@
   }
 
   function renderAddItemButtomMessage(
-    activeId: TreeNodeId | undefined
+    activeId: TreeNodeId | undefined,
+    hasSelection: boolean
   ): string {
     if (!hasSelection) {
       return "Add top-level item";
