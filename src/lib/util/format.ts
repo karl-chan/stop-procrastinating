@@ -5,5 +5,5 @@ export function formatDate(d: Dayjs): string {
 }
 
 export function formatPercent(double: number): string {
-  return Math.floor(double * 100) + '%'
+  return isNaN(double) ? "error" : Math.floor(double * 100) + '%'
 }
