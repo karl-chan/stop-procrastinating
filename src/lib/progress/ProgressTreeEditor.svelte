@@ -28,6 +28,7 @@
   let parentMapping: Map<TreeNodeId, TreeNodeId>;
 
   $: addItemButtonMessage = renderAddItemButtomMessage(activeId);
+  $: hasSelection = activeId !== undefined && activeId !== "";
 
   function handleAdd(event: CustomEvent<AddProgressArgs>) {
     const { progress: toAdd, parent } = event.detail;
@@ -88,16 +89,16 @@
   function getNearestFolder(
     activeId: TreeNodeId | undefined
   ): ProgressTree | undefined {
-    if (activeId === undefined || activeId === "") {
+    if (!hasSelection) {
       return undefined;
     }
-    const selected = mapping.get(activeId);
+    const selected = mapping.get(activeId!);
     if (selected?.children) {
       // Selection is a folder
       return selected;
     } else {
       // Selection is an item
-      const parentId = parentMapping.get(activeId);
+      const parentId = parentMapping.get(activeId!);
       return parentId !== undefined ? mapping.get(parentId) : undefined;
     }
   }
@@ -105,10 +106,10 @@
   function renderAddItemButtomMessage(
     activeId: TreeNodeId | undefined
   ): string {
-    if (activeId === undefined || activeId === "") {
+    if (!hasSelection) {
       return "Add top-level item";
     }
-    const selected = mapping.get(activeId);
+    const selected = mapping.get(activeId!);
     if (selected?.leaf !== undefined) {
       return "Add sibling item";
     } else {
@@ -128,7 +129,7 @@
   <Button icon={Add} kind="tertiary" on:click={() => (showAddModal = true)}
     >{addItemButtonMessage}</Button
   >
-  {#if activeId !== undefined && activeId !== ""}
+  {#if hasSelection}
     <Button icon={Edit} kind="secondary" on:click={() => (showEditModal = true)}
       >Edit item</Button
     >
