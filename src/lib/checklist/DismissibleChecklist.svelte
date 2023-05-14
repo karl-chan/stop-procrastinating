@@ -62,6 +62,7 @@
         <Button
           iconDescription="Open and dismiss all"
           icon={DataCheck}
+          kind="tertiary"
           on:click={dismissAll}
         />
       {/if}

@@ -218,7 +218,7 @@
 />
 
 <Flex direction="row" justify="start">
-  <Button icon={Add} kind="tertiary" on:click={() => (showAddModal = true)}
+  <Button icon={Add} kind="primary" on:click={() => (showAddModal = true)}
     >{addItemButtonMessage}</Button
   >
   {#if hasSelection}
@@ -230,7 +230,7 @@
       kind="danger-tertiary"
       on:click={() => (showRemoveModal = true)}>Remove item</Button
     >
-    <Button icon={Clean} kind="primary" on:click={() => (activeId = undefined)}
+    <Button icon={Clean} kind="tertiary" on:click={() => (activeId = undefined)}
       >Deselect item
     </Button>
     <Button
