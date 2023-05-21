@@ -5,8 +5,12 @@
     Add,
     ArrowDown,
     ArrowUp,
+    CategoryAdd,
+    Checkmark,
     Clean,
+    Close,
     Edit,
+    Migrate,
     TrashCan,
   } from "carbon-icons-svelte";
   import Flex from "../flex/Flex.svelte";
@@ -31,6 +35,9 @@
   let showEditModal: boolean;
   let showRemoveModal: boolean;
   let addItemButtonMessage: string;
+
+  let reanchorMode: boolean;
+  let reanchorId: TreeNodeId | undefined;
 
   let mapping: Map<TreeNodeId, ProgressTree>;
   let parentMapping: Map<TreeNodeId, TreeNodeId>;
@@ -208,6 +215,41 @@
     }
     activeId = undefined;
   }
+
+  function enterReanchorMode() {
+    reanchorMode = true;
+    reanchorId = activeId;
+
+    activeId = undefined;
+  }
+
+  function exitReanchorMode() {
+    reanchorMode = false;
+    reanchorId = undefined;
+    activeId = undefined;
+  }
+
+  function confirmReanchor() {
+    const toReanchor = mapping.get(reanchorId!)!;
+
+    const oldParent = mapping.get(parentMapping.get(reanchorId!)!);
+    const newParent = mapping.get(activeId!);
+
+    if (oldParent === undefined) {
+      progress = progress.filter((root) => root !== toReanchor);
+    } else {
+      oldParent.children = oldParent.children?.filter((c) => c !== toReanchor);
+    }
+
+    if (newParent === undefined) {
+      progress.push(toReanchor);
+    } else {
+      newParent?.children?.push(toReanchor);
+    }
+    progress = progress;
+
+    exitReanchorMode();
+  }
 </script>
 
 <ProgressTreeView
@@ -218,35 +260,77 @@
 />
 
 <Flex direction="row" justify="start">
-  <Button icon={Add} kind="primary" on:click={() => (showAddModal = true)}
-    >{addItemButtonMessage}</Button
-  >
-  {#if hasSelection}
-    <Button icon={Edit} kind="secondary" on:click={() => (showEditModal = true)}
-      >Edit item</Button
+  {#if !reanchorMode}
+    <!-- Normal toolbar buttons -->
+    <Button icon={Add} kind="primary" on:click={() => (showAddModal = true)}
+      >{addItemButtonMessage}</Button
     >
-    <Button
-      icon={TrashCan}
-      kind="danger-tertiary"
-      on:click={() => (showRemoveModal = true)}>Remove item</Button
-    >
-    <Button icon={Clean} kind="tertiary" on:click={() => (activeId = undefined)}
-      >Deselect item
-    </Button>
-    <Button
-      icon={ArrowUp}
-      iconDescription="Move up"
-      kind="secondary"
-      bind:disabled={selectionInfo.isFirstOfParent}
-      on:click={moveUp}
-    />
-    <Button
-      icon={ArrowDown}
-      iconDescription="Move down"
-      kind="secondary"
-      bind:disabled={selectionInfo.isLastOfParent}
-      on:click={moveDown}
-    />
+    {#if hasSelection}
+      <Button
+        icon={Edit}
+        kind="secondary"
+        on:click={() => (showEditModal = true)}>Edit item</Button
+      >
+      <Button
+        icon={TrashCan}
+        kind="danger-tertiary"
+        on:click={() => (showRemoveModal = true)}>Remove item</Button
+      >
+      <Button
+        icon={Clean}
+        kind="tertiary"
+        on:click={() => (activeId = undefined)}
+        >Deselect item
+      </Button>
+      <Button
+        icon={ArrowUp}
+        iconDescription="Move up"
+        kind="secondary"
+        bind:disabled={selectionInfo.isFirstOfParent}
+        on:click={moveUp}
+      />
+      <Button
+        icon={ArrowDown}
+        iconDescription="Move down"
+        kind="secondary"
+        bind:disabled={selectionInfo.isLastOfParent}
+        on:click={moveDown}
+      />
+      <Button
+        icon={Migrate}
+        iconDescription="Reanchor parent"
+        kind="secondary"
+        on:click={enterReanchorMode}
+      />
+    {/if}
+  {:else}
+    <!-- Reanchor toolbar buttons -->
+    {#if !hasSelection}
+      <div class="reanchor-message">Select destination folder</div>
+      <Button icon={CategoryAdd} kind="secondary" on:click={confirmReanchor}
+        >Pin to top level</Button
+      >
+      <Button icon={Close} kind="danger-tertiary" on:click={exitReanchorMode}
+        >Cancel</Button
+      >
+    {:else if activeId === undefined || mapping.get(activeId)?.children === undefined}
+      <div class="reanchor-message error">
+        Destination must be a folder! Please select again.
+      </div>
+      <Button icon={Close} kind="danger-tertiary" on:click={exitReanchorMode}
+        >Cancel</Button
+      >
+    {:else}
+      <div class="reanchor-message confirm">
+        Reanchor to folder {mapping.get(activeId)?.name}?
+      </div>
+      <Button icon={Checkmark} kind="secondary" on:click={confirmReanchor}
+        >Confirm</Button
+      >
+      <Button icon={Close} kind="danger-tertiary" on:click={exitReanchorMode}
+        >Cancel</Button
+      >
+    {/if}
   {/if}
 </Flex>
 
@@ -274,3 +358,19 @@
     on:remove={handleRemove}
   />
 {/if}
+
+<style type="scss">
+  .reanchor-message {
+    margin-right: 10px;
+    font-weight: bold;
+    color: #0f62fe;
+  }
+
+  .error {
+    color: red;
+  }
+
+  .confirm {
+    color: green;
+  }
+</style>
