@@ -129,15 +129,15 @@
     <div style:width="20px" />
 
     <Button
-      icon={ExpandAll}
-      iconDescription="Expand All"
-      on:click={treeview?.expandAll}
-    />
-    <Button
       icon={CollapseAll}
       iconDescription="Collapse All"
       kind="secondary"
       on:click={treeview?.collapseAll}
+    />
+    <Button
+      icon={ExpandAll}
+      iconDescription="Expand All"
+      on:click={treeview?.expandAll}
     />
   </Flex>
 </Flex>
