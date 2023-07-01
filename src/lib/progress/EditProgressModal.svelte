@@ -70,6 +70,7 @@
   primaryButtonText="Confirm"
   secondaryButtonText="Cancel"
   hasForm={true}
+  preventCloseOnClickOutside
   on:click:button--secondary={() => (open = false)}
   on:submit={edit}
 >
