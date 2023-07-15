@@ -5,11 +5,11 @@
     TreeNodeId,
   } from "carbon-components-svelte/types/TreeView/TreeView.svelte";
   import { CollapseAll, ExpandAll } from "carbon-icons-svelte";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import Flex from "../flex/Flex.svelte";
   import { formatPercent } from "../util/format";
   import type {
-    Progress,
+    ProgressStore,
     ProgressTree,
     ProgressTreeMappingChangeArgs,
   } from "./progress";
@@ -19,22 +19,22 @@
   }>();
 
   export let title: string;
-  export let progress: Progress;
+  export let progress: ProgressStore;
   export let activeId: TreeNodeId | undefined;
 
   let treeview: TreeView;
-  let showDescription: boolean;
 
-  $: children = toTreeView(progress, showDescription);
+  $: children = toTreeView(progress);
+
+  onMount(async () => {
+    progress.settings.expand ? expandAll() : collapseAll();
+  });
 
   interface Accumulator {
     percent: number;
   }
 
-  function toTreeView(
-    progress: Progress,
-    showDescription: boolean
-  ): TreeNode[] {
+  function toTreeView(progress: ProgressStore): TreeNode[] {
     let counter = 0;
     let mapping = new Map<TreeNodeId, ProgressTree>();
     let parentMapping = new Map<TreeNodeId, TreeNodeId>(); // Child id to parent id
@@ -42,10 +42,9 @@
     function formatRow(
       name: string,
       description: string,
-      percent: number,
-      showDescription: boolean
+      percent: number
     ): string {
-      return showDescription
+      return progress.settings.showDescription
         ? `${name} (${formatPercent(percent)}) - ${description}`
         : `${name} (${formatPercent(percent)})`;
     }
@@ -68,12 +67,7 @@
         return {
           node: {
             id,
-            text: formatRow(
-              tree.name,
-              tree.description,
-              percent,
-              showDescription
-            ),
+            text: formatRow(tree.name, tree.description, percent),
           },
           acc: { percent },
         };
@@ -88,12 +82,7 @@
         return {
           node: {
             id,
-            text: formatRow(
-              tree.name,
-              tree.description,
-              percent,
-              showDescription
-            ),
+            text: formatRow(tree.name, tree.description, percent),
             children: zipped.map((z) => z.node),
           },
           acc: { percent },
@@ -107,7 +96,7 @@
       }
     }
 
-    const roots = progress
+    const roots = progress.tree
       .map((root) => dfs(root, undefined))
       .map(({ node, acc }) => node);
 
@@ -118,12 +107,25 @@
 
     return roots;
   }
+
+  function expandAll() {
+    treeview.expandAll();
+    progress.settings.expand = true;
+  }
+
+  function collapseAll() {
+    treeview.collapseAll();
+    progress.settings.expand = false;
+  }
 </script>
 
 <Flex direction="row" justify="between">
   <h2>{title}</h2>
   <Flex direction="row">
-    <Toggle labelText="Show description" bind:toggled={showDescription} />
+    <Toggle
+      labelText="Show description"
+      bind:toggled={progress.settings.showDescription}
+    />
 
     <!-- Add 20px margin between toggle and buttons -->
     <div style:width="20px" />
@@ -132,12 +134,12 @@
       icon={CollapseAll}
       iconDescription="Collapse All"
       kind="secondary"
-      on:click={treeview?.collapseAll}
+      on:click={collapseAll}
     />
     <Button
       icon={ExpandAll}
       iconDescription="Expand All"
-      on:click={treeview?.expandAll}
+      on:click={expandAll}
     />
   </Flex>
 </Flex>

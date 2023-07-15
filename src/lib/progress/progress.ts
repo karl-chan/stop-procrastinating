@@ -1,5 +1,9 @@
 import type { TreeNodeId } from "carbon-components-svelte/types/TreeView/TreeView.svelte";
 
+export interface ProgressStore {
+  tree: ProgressTree[];
+  settings: ProgressSettings
+}
 export interface ProgressLeaf {
   current: number
   total: number
@@ -11,8 +15,6 @@ export interface ProgressTree {
   leaf?: ProgressLeaf
   children?: ProgressTree[]
 }
-
-export type Progress = ProgressTree[];
 
 export interface AddProgressArgs {
   progress: ProgressTree;
@@ -35,4 +37,9 @@ export interface ProgressTreeMappingChangeArgs {
   mapping: Map<TreeNodeId, ProgressTree>
   parentMapping: Map<TreeNodeId, TreeNodeId> // Child id to parent id
 
+}
+
+export interface ProgressSettings {
+  showDescription: boolean,
+  expand: boolean
 }

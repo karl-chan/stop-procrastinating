@@ -21,14 +21,14 @@
   import type {
     AddProgressArgs,
     EditProgressArgs,
-    Progress,
+    ProgressStore,
     ProgressTree,
     ProgressTreeMappingChangeArgs,
     RemoveProgressArgs,
   } from "./progress";
 
   export let title: string;
-  export let progress: Progress;
+  export let progress: ProgressStore;
 
   let activeId: TreeNodeId | undefined;
   let showAddModal: boolean;
@@ -57,7 +57,7 @@
     if (parent !== undefined) {
       parent.children?.push(toAdd);
     } else {
-      progress.push(toAdd);
+      progress.tree.push(toAdd);
     }
     progress = progress;
   }
@@ -81,7 +81,7 @@
     function dfs(tree: ProgressTree, parent?: ProgressTree) {
       if (tree === toRemove) {
         if (parent === undefined) {
-          progress = progress.filter((root) => root !== toRemove);
+          progress.tree = progress.tree.filter((root) => root !== toRemove);
         } else {
           parent.children = parent.children?.filter((c) => c !== toRemove);
         }
@@ -95,7 +95,7 @@
       }
     }
 
-    for (const root of progress) {
+    for (const root of progress.tree) {
       dfs(root, undefined);
     }
     progress = progress;
@@ -152,8 +152,8 @@
     const parentId = parentMapping.get(activeId!);
     if (parentId === undefined) {
       return {
-        isFirstOfParent: progress[0] === selected,
-        isLastOfParent: progress[progress.length - 1] === selected,
+        isFirstOfParent: progress.tree[0] === selected,
+        isLastOfParent: progress.tree[progress.tree.length - 1] === selected,
       };
     } else {
       const siblings = mapping.get(parentId)?.children!;
@@ -176,20 +176,20 @@
     const selected = mapping.get(activeId!)!;
     const parentId = parentMapping.get(activeId!);
     if (parentId === undefined) {
-      const index = progress.indexOf(selected);
+      const index = progress.tree.indexOf(selected);
       if (direction.isUp) {
-        progress = [
-          ...progress.slice(0, index - 1),
+        progress.tree = [
+          ...progress.tree.slice(0, index - 1),
           selected,
-          progress[index - 1],
-          ...progress.slice(index + 1),
+          progress.tree[index - 1],
+          ...progress.tree.slice(index + 1),
         ];
       } else if (direction.isDown) {
-        progress = [
-          ...progress.slice(0, index),
-          progress[index + 1],
+        progress.tree = [
+          ...progress.tree.slice(0, index),
+          progress.tree[index + 1],
           selected,
-          ...progress.slice(index + 2),
+          ...progress.tree.slice(index + 2),
         ];
       }
     } else {
@@ -236,13 +236,13 @@
     const newParent = mapping.get(activeId!);
 
     if (oldParent === undefined) {
-      progress = progress.filter((root) => root !== toReanchor);
+      progress.tree = progress.tree.filter((root) => root !== toReanchor);
     } else {
       oldParent.children = oldParent.children?.filter((c) => c !== toReanchor);
     }
 
     if (newParent === undefined) {
-      progress.push(toReanchor);
+      progress.tree.push(toReanchor);
     } else {
       newParent?.children?.push(toReanchor);
     }
