@@ -22,6 +22,7 @@
   <HeaderNav>
     <HeaderNavItem href="{base}/" text="Home" />
     <HeaderNavItem href="{base}/progress" text="Progress" />
+    <HeaderNavItem href="{base}/decisions" text="Decisions" />
   </HeaderNav>
 </Header>
 
@@ -29,6 +30,7 @@
   <SideNavItems>
     <SideNavLink href="{base}/" text="Home" />
     <SideNavLink href="{base}/progress" text="Progress" />
+    <SideNavLink href="{base}/decisions" text="Decisions" />
   </SideNavItems>
 </SideNav>
 

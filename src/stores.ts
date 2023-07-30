@@ -1,6 +1,7 @@
 
 import { persisted } from 'svelte-local-storage-store'
 import type { Checklist } from './lib/checklist/checklist'
+import type { DecisionStore } from './lib/decision/decision'
 import type { ProgressStore } from './lib/progress/progress'
 
 export const checklist = persisted('checklist', {
@@ -14,4 +15,8 @@ export const progress = persisted('progress', <ProgressStore>{
     showDescription: false,
     expand: false
   },
+})
+
+export const decisions = persisted('decisions', <DecisionStore>{
+  workbooks: []
 })
