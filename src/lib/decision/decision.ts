@@ -11,4 +11,5 @@ export interface DecisionMatrix {
   rows: string[]
   columns: string[]
   cells: number[][]
+  rowWeights: number[]
 }
