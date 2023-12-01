@@ -23,7 +23,13 @@
 </script>
 
 {#if editing}
-  <NumberInput bind:value on:blur={onChange} {min} {max} />
+  <NumberInput
+    bind:value
+    on:blur={onChange}
+    {min}
+    {max}
+    invalidText="Number must be between {min} and {max}"
+  />
 {:else}
   <Flex direction="row">
     <div class:bold>{formatter(value)}</div>

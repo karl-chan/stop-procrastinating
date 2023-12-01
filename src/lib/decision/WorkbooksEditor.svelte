@@ -13,7 +13,7 @@
   import RemoveWorkbookModal from "./RemoveWorkbookModal.svelte";
   import WorkbookEditor from "./WorkbookEditor.svelte";
 
-  let showWeights = false;
+  let showWeights = true;
   let selected = 0;
   let showRemoveModal = false;
 
@@ -32,11 +32,20 @@
         rowWeights: [],
       },
     });
-    $store = $store;
+    forceRedraw();
   }
 
   function deleteWorkbook() {
     showRemoveModal = true;
+  }
+
+  function toggleShowWeights() {
+    showWeights = !showWeights;
+    forceRedraw();
+  }
+
+  function forceRedraw() {
+    $store = $store;
   }
 </script>
 
@@ -50,7 +59,11 @@
     {/if}
   </ButtonSet>
   <div>
-    <Toggle labelText="Show weights" bind:toggled={showWeights} />
+    <Toggle
+      labelText="Show weights"
+      toggled={showWeights}
+      on:toggle={toggleShowWeights}
+    />
   </div>
 </Flex>
 
