@@ -26,7 +26,7 @@
 
   function addWorkbook() {
     $store.decisions.workbooks.push({
-      name: `Workbook ${$store.decisions.workbooks.length + 1}`,
+      name: generateNewWorkbookName(),
       matrix: {
         rows: [],
         columns: [],
@@ -35,6 +35,15 @@
       },
     });
     forceRedraw();
+  }
+
+  function generateNewWorkbookName() {
+    const numbers = $store.decisions.workbooks.map((w) => {
+      const matches = w.name.match(/^Workbook ([0-9]+)$/);
+      return matches ? +matches[1] : 0;
+    });
+    const largest = Math.max(0, ...numbers);
+    return `Workbook ${largest + 1}`;
   }
 
   function deleteWorkbook() {
