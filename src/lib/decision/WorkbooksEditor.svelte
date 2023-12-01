@@ -8,7 +8,7 @@
     Toggle,
   } from "carbon-components-svelte";
   import { Add, TrashCan } from "carbon-icons-svelte";
-  import { decisions } from "../../stores";
+  import { store } from "../../stores";
   import Flex from "../flex/Flex.svelte";
   import RemoveWorkbookModal from "./RemoveWorkbookModal.svelte";
   import WorkbookEditor from "./WorkbookEditor.svelte";
@@ -18,13 +18,13 @@
   let showRemoveModal = false;
 
   $: activeWorkbook =
-    $decisions.workbooks.length > selected
-      ? $decisions.workbooks[selected]
+    $store.decisions.workbooks.length > selected
+      ? $store.decisions.workbooks[selected]
       : null;
 
   function addWorkbook() {
-    $decisions.workbooks.push({
-      name: `Workbook ${$decisions.workbooks.length + 1}`,
+    $store.decisions.workbooks.push({
+      name: `Workbook ${$store.decisions.workbooks.length + 1}`,
       matrix: {
         rows: [],
         columns: [],
@@ -32,7 +32,7 @@
         rowWeights: [],
       },
     });
-    $decisions = $decisions;
+    $store = $store;
   }
 
   function deleteWorkbook() {
@@ -55,11 +55,11 @@
 </Flex>
 
 <Tabs bind:selected>
-  {#each $decisions.workbooks as workbook}
+  {#each $store.decisions.workbooks as workbook}
     <Tab label={workbook.name} />
   {/each}
   <svelte:fragment slot="content">
-    {#each $decisions.workbooks as workbook}
+    {#each $store.decisions.workbooks as workbook}
       <TabContent>
         <WorkbookEditor bind:showWeights bind:workbook />
       </TabContent>

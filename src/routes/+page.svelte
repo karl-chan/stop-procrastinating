@@ -1,9 +1,9 @@
 <script lang="ts">
   import DailyChecklist from "../lib/checklist/DailyChecklist.svelte";
-  import { checklist } from "../stores";
+  import { store } from "../stores";
 </script>
 
 <DailyChecklist
-  bind:checklist={$checklist.checklist}
-  bind:doneDates={$checklist.doneDates}
+  bind:checklist={$store.checklist.checklist}
+  bind:doneDates={$store.checklist.doneDates}
 />

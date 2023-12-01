@@ -41,7 +41,7 @@
 
   function addColumn() {
     workbook.matrix.columns.push(
-      `Column ${workbook.matrix.columns.length + 1}`
+      `Column ${workbook.matrix.columns.length + 1}`,
     );
     workbook.matrix.cells.forEach((row) => row.push(defaultWeight));
     workbook = workbook;
@@ -50,7 +50,7 @@
   function addRow() {
     workbook.matrix.rows.push(`Row ${workbook.matrix.rows.length + 1}`);
     workbook.matrix.cells.push(
-      new Array(workbook.matrix.columns.length).fill(0)
+      new Array(workbook.matrix.columns.length).fill(0),
     );
     workbook.matrix.rowWeights.push(0);
     workbook = workbook;

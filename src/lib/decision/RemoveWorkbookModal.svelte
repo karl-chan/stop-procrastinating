@@ -1,13 +1,15 @@
 <script lang="ts">
   import { Modal } from "carbon-components-svelte";
-  import { decisions } from "../../stores";
+  import { store } from "../../stores";
   import type { DecisionWorkbook } from "./decision";
 
   export let open: boolean;
   export let workbook: DecisionWorkbook;
 
   function remove() {
-    $decisions.workbooks = $decisions.workbooks.filter((w) => w !== workbook);
+    $store.decisions.workbooks = $store.decisions.workbooks.filter(
+      (w) => w !== workbook,
+    );
     open = false;
   }
 </script>

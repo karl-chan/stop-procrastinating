@@ -1,22 +1,17 @@
 
 import { persisted } from 'svelte-local-storage-store'
-import type { Checklist } from './lib/checklist/checklist'
-import type { DecisionStore } from './lib/decision/decision'
-import type { ProgressStore } from './lib/progress/progress'
+import { defaultChecklistStore, type ChecklistStore } from './lib/checklist/checklist'
+import { defaultDecisionStore, type DecisionStore } from './lib/decision/decision'
+import { defaultProgressStore, type ProgressStore } from './lib/progress/progress'
 
-export const checklist = persisted('checklist', {
-  checklist: [] as Checklist,
-  doneDates: []  // "YYYY-MM-DD"
+export const store = persisted('store', <Store>{
+  checklist: defaultChecklistStore,
+  progress: defaultProgressStore,
+  decisions: defaultDecisionStore,
 })
 
-export const progress = persisted('progress', <ProgressStore>{
-  tree: [],
-  settings: {
-    showDescription: false,
-    expand: false
-  },
-})
-
-export const decisions = persisted('decisions', <DecisionStore>{
-  workbooks: []
-})
+interface Store {
+  checklist: ChecklistStore;
+  progress: ProgressStore;
+  decisions: DecisionStore;
+}

@@ -43,3 +43,12 @@ export interface ProgressSettings {
   showDescription: boolean,
   expand: boolean
 }
+
+
+export const defaultProgressStore: ProgressStore = {
+  tree: [],
+  settings: {
+    showDescription: false,
+    expand: false
+  },
+}

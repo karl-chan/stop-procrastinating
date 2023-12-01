@@ -27,7 +27,7 @@
 
   function dismiss(i: number) {
     const item = checklist[i];
-    if (item.actionUrl.trim().length > 0) {
+    if (item.actionUrl && item.actionUrl.trim().length > 0) {
       window.open(item.actionUrl, "_blank")?.focus();
     }
     dismissed[i] = true;

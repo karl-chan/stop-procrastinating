@@ -13,3 +13,7 @@ export interface DecisionMatrix {
   cells: number[][]
   rowWeights: number[]
 }
+
+export const defaultDecisionStore: DecisionStore = {
+  workbooks: []
+}
