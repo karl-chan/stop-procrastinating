@@ -34,7 +34,7 @@
         rowWeights: [],
       },
     });
-    forceRedraw();
+    $store = $store;
   }
 
   function generateNewWorkbookName() {
@@ -48,15 +48,6 @@
 
   function deleteWorkbook() {
     showRemoveModal = true;
-  }
-
-  function toggleShowWeights() {
-    showWeights = !showWeights;
-    forceRedraw();
-  }
-
-  function forceRedraw() {
-    $store = $store;
   }
 </script>
 
@@ -76,26 +67,24 @@
     {/if}
   </ButtonSet>
   <div>
-    <Toggle
-      labelText="Show weights"
-      toggled={showWeights}
-      on:toggle={toggleShowWeights}
-    />
+    <Toggle labelText="Show weights" bind:toggled={showWeights} />
   </div>
 </Flex>
 
-<Tabs bind:selected>
-  {#each $store.decisions.workbooks as workbook}
-    <Tab label={workbook.name} />
-  {/each}
-  <svelte:fragment slot="content">
+{#key $store.decisions.workbooks.length}
+  <Tabs bind:selected>
     {#each $store.decisions.workbooks as workbook}
-      <TabContent>
-        <WorkbookEditor bind:showWeights bind:workbook />
-      </TabContent>
+      <Tab label={workbook.name} />
     {/each}
-  </svelte:fragment>
-</Tabs>
+    <svelte:fragment slot="content">
+      {#each $store.decisions.workbooks as workbook}
+        <TabContent>
+          <WorkbookEditor bind:showWeights bind:workbook />
+        </TabContent>
+      {/each}
+    </svelte:fragment>
+  </Tabs>
+{/key}
 
 {#if activeWorkbook}
   <RemoveWorkbookModal bind:open={showRemoveModal} workbook={activeWorkbook} />
