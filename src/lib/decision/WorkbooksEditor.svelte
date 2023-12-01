@@ -7,15 +7,17 @@
     Tabs,
     Toggle,
   } from "carbon-components-svelte";
-  import { Add, TrashCan } from "carbon-icons-svelte";
+  import { Add, Edit, TrashCan } from "carbon-icons-svelte";
   import { store } from "../../stores";
   import Flex from "../flex/Flex.svelte";
   import RemoveWorkbookModal from "./RemoveWorkbookModal.svelte";
+  import RenameWorkbookModal from "./RenameWorkbookModal.svelte";
   import WorkbookEditor from "./WorkbookEditor.svelte";
 
   let showWeights = true;
   let selected = 0;
   let showRemoveModal = false;
+  let showRenameModal = false;
 
   $: activeWorkbook =
     $store.decisions.workbooks.length > selected
@@ -56,6 +58,12 @@
       <Button icon={TrashCan} kind="danger" on:click={deleteWorkbook}
         >Delete workbook</Button
       >
+      <Button
+        kind="secondary"
+        iconDescription="Rename"
+        icon={Edit}
+        on:click={() => (showRenameModal = true)}>Rename workbook</Button
+      >
     {/if}
   </ButtonSet>
   <div>
@@ -82,4 +90,5 @@
 
 {#if activeWorkbook}
   <RemoveWorkbookModal bind:open={showRemoveModal} workbook={activeWorkbook} />
+  <RenameWorkbookModal bind:open={showRenameModal} workbook={activeWorkbook} />
 {/if}
