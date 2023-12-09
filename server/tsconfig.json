@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "outDir": "build",
+    "strict": true,
+    "esModuleInterop": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "global.d.ts",
+  ],
+  "ts-node": {
+    "files": true
+  },
+}

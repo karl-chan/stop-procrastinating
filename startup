@@ -1,0 +1,2 @@
+ttab 'cd client && npm run dev'
+ttab 'cd server && npm run dev'
