@@ -2,10 +2,10 @@
   import { base } from "$app/paths";
   import { Button, HeaderPanelDivider } from "carbon-components-svelte";
   import {
-      CloudUpload,
-      Logout,
-      RecentlyViewed,
-      TrashCan,
+    CloudUpload,
+    Logout,
+    RecentlyViewed,
+    TrashCan,
   } from "carbon-icons-svelte";
   import dayjs from "dayjs";
   import { defaultStore, store } from "../../stores";
@@ -83,7 +83,7 @@
               size="small"
               icon={RecentlyViewed}
               on:click={() => restoreFrom(backup)}
-              >{dayjs(backup.timestamp).format("lll")}</Button
+              >{dayjs(backup.timestamp).format("MMM D, YYYY h:mm A")}</Button
             >
             <Button
               size="small"
