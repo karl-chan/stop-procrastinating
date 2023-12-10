@@ -33,7 +33,7 @@ export async function registerAuthRoutes (fastify: FastifyInstance): Promise<voi
 
       request.session.googleAuth = googleAuth
       request.session.user = { name: data.name!, avatarUrl: data.picture! }
-      await reply.redirect('/')
+      await reply.redirect(process.env.GOOGLE_CALLBACK_URI_REDIRECT!)
     } catch (err) {
       await reply.status(400).send(err)
     }
