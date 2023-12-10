@@ -83,6 +83,7 @@
               size="small"
               icon={RecentlyViewed}
               on:click={() => restoreFrom(backup)}
+              style="width: 222px"
               >{dayjs(backup.timestamp).format("MMM D, YYYY h:mm A")}</Button
             >
             <Button
