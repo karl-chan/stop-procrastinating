@@ -6,7 +6,7 @@ export async function registerUserRoutes (fastify: FastifyInstance): Promise<voi
       const { name, avatarUrl } = request.session.user
       await reply.send({ name, avatarUrl })
     } catch (err) {
-      await reply.send()
+      await reply.send(err)
     }
   })
 }

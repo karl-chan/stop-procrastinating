@@ -12,10 +12,10 @@ const PORT: number = +(process.env.PORT ?? 3000)
 
 async function registerRoutes (fastify: FastifyInstance): Promise<void> {
   await registerAuthRoutes(fastify)
-  await registerUserRoutes(fastify)
   await fastify.register(async (authed) => {
     await registerAuthHook(authed)
     await registerBackupRoutes(authed)
+    await registerUserRoutes(fastify)
   })
 }
 
