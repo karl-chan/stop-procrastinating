@@ -17,7 +17,10 @@ export async function registerAuthRoutes (fastify: FastifyInstance): Promise<voi
       auth: fastifyOauth2.GOOGLE_CONFIGURATION
     },
     startRedirectPath: '/api/login/google',
-    callbackUri: process.env.GOOGLE_CALLBACK_URI!
+    callbackUri: process.env.GOOGLE_CALLBACK_URI!,
+    callbackUriParams: {
+      access_type: 'offline'
+    }
   })
 
   fastify.get('/api/login/google/callback', async (request, reply) => {
@@ -25,8 +28,11 @@ export async function registerAuthRoutes (fastify: FastifyInstance): Promise<voi
       const { token } = await fastify.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(request)
       const googleAuth = new google.auth.OAuth2()
       googleAuth.setCredentials({
+        ...token,
+        refresh_token: token.refresh_token,
+        expiry_date: token.expires_at.getTime(),
         access_token: token.access_token,
-        refresh_token: token.refresh_token
+        id_token: token.id_token
       })
 
       const { data } = await google.oauth2('v2').userinfo.get({ auth: googleAuth })
