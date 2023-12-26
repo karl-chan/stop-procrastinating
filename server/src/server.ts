@@ -4,7 +4,8 @@ import { fastifyStatic } from '@fastify/static'
 import 'dotenv/config'
 import { fastify, type FastifyInstance } from 'fastify'
 import path from 'path'
-import { registerAuthHook, registerAuthRoutes } from './routes/auth'
+import { registerAuthHook } from './hooks/auth'
+import { registerAuthRoutes } from './routes/auth'
 import { registerBackupRoutes } from './routes/backup'
 import { registerUserRoutes } from './routes/user'
 
@@ -14,6 +15,7 @@ async function registerRoutes (fastify: FastifyInstance): Promise<void> {
   await registerAuthRoutes(fastify)
   await fastify.register(async (authed) => {
     await registerAuthHook(authed)
+
     await registerBackupRoutes(authed)
     await registerUserRoutes(fastify)
   })

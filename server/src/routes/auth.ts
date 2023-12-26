@@ -50,11 +50,3 @@ export async function registerAuthRoutes (fastify: FastifyInstance): Promise<voi
     await reply.send()
   })
 }
-
-export async function registerAuthHook (fastify: FastifyInstance): Promise<void> {
-  fastify.addHook('preHandler', async (request, reply) => {
-    if (request.session.googleAuth === undefined) {
-      return await reply.status(401).send()
-    }
-  })
-}
