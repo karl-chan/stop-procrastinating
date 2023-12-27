@@ -28,11 +28,13 @@ export async function registerAuthRoutes (fastify: FastifyInstance): Promise<voi
       const { token } = await fastify.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(request)
       const googleAuth = new google.auth.OAuth2()
       googleAuth.setCredentials({
-        ...token,
         refresh_token: token.refresh_token,
         expiry_date: token.expires_at.getTime(),
         access_token: token.access_token,
-        id_token: token.id_token
+        token_type: token.token_type,
+        id_token: token.id_token,
+        // @ts-expect-error Google auth tokens are special and contain the scope attribute
+        scope: token.scope
       })
 
       const { data } = await google.oauth2('v2').userinfo.get({ auth: googleAuth })
