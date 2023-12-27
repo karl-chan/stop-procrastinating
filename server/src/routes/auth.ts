@@ -26,7 +26,10 @@ export async function registerAuthRoutes (fastify: FastifyInstance): Promise<voi
   fastify.get('/api/login/google/callback', async (request, reply) => {
     try {
       const { token } = await fastify.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(request)
-      const googleAuth = new google.auth.OAuth2()
+      const googleAuth = new google.auth.OAuth2({
+        clientId: process.env.GOOGLE_CLIENT_ID!,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET!
+      })
       googleAuth.setCredentials({
         refresh_token: token.refresh_token,
         expiry_date: token.expires_at.getTime(),
