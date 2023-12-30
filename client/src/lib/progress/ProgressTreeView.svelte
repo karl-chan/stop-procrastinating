@@ -42,7 +42,7 @@
     function formatRow(
       name: string,
       description: string,
-      percent: number
+      percent: number,
     ): string {
       return progress.settings.showDescription
         ? `${name} (${formatPercent(percent)}) - ${description}`
@@ -51,7 +51,7 @@
 
     function dfs(
       tree: ProgressTree,
-      parentId: number | undefined
+      parentId: number | undefined,
     ): {
       node: TreeNode;
       acc: Accumulator;
@@ -67,7 +67,11 @@
         return {
           node: {
             id,
-            text: formatRow(tree.name, tree.description, percent),
+            text: formatRow(
+              tree.name,
+              `${tree.description} [${tree.leaf.current}/${tree.leaf.total}]`,
+              percent,
+            ),
           },
           acc: { percent },
         };
@@ -90,8 +94,8 @@
       } else {
         throw new Error(
           `Progress tree has neither leaf nor children: ${JSON.stringify(
-            tree
-          )}!`
+            tree,
+          )}!`,
         );
       }
     }
