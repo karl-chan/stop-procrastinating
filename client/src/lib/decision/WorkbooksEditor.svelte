@@ -60,7 +60,6 @@
       >
       <Button
         kind="secondary"
-        iconDescription="Rename"
         icon={Edit}
         on:click={() => (showRenameModal = true)}>Rename workbook</Button
       >

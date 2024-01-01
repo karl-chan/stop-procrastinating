@@ -170,6 +170,7 @@
         <Button
           icon={TrashCan}
           iconDescription="Delete row"
+          tooltipPosition="right"
           kind="danger"
           on:click={() => deleteRow(+row.id)}
         />

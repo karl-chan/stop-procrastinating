@@ -90,6 +90,8 @@
               size="small"
               kind="danger"
               icon={TrashCan}
+              iconDescription="Delete backup"
+              tooltipPosition="left"
               on:click={() => deleteBackup(backup)}
             />
           </Flex>
